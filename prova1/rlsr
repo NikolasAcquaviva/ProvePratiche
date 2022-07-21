@@ -1,0 +1,43 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+   echo "Inserisci la directory da valutare"
+   exit 69
+fi
+find | grep ./ | sort > ../hold
+numfiles=$(cat ../hold | wc -l)
+i=1
+head ../contenitore -n 0 > ../contenitore
+head ../final -n 0 > ../final
+while [ $i -le $numfiles ]; do
+  file=$(cat ../hold | head -n $i | tail -n 1)
+  filename=$(basename $file)
+  dirname=$(dirname $file)
+  echo $filename ':' $dirname  >> ../contenitore
+  i=`expr $i + 1`
+done ;
+i=1
+while [ $i -le $numfiles ]; do
+  file=$(cat ../hold | head -n $i | tail -n 1)
+  filename=$(basename $file)
+  cat ../contenitore | grep -G $filename\ : >> ../contenitore 
+  i=`expr $i + 1`
+done ;
+sort -u ../contenitore > ../con1
+i=1
+while [ $i -le $numfiles ]; do
+  file=$(cat ../hold | head -n $i | tail -n 1)
+  filename=$(basename $file)
+  j=1
+  occ=$(cat ../con1 | grep -G $filename\ : | wc -l)
+  array=()
+  while [ $j -le $occ ]; do
+    pair=$(cat ../con1 | grep -G $filename\ : | head -n $j | tail -n 1)
+    dir=$(echo $pair | cut -d : -f 2)
+    array+=$dir
+    j=`expr $j + 1`
+  done;
+  echo "$filename :$array" >> ../final
+  i=`expr $i + 1`
+done;
+cat ../final | sort -u
+exit 0

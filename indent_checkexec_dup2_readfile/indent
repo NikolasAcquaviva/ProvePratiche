@@ -1,0 +1,6 @@
+#!/bin/bash
+dir=''
+if [ -z $1 ] ; then dir='.' 
+else dir=$1
+fi
+find $dir -type f  -name '*.[c|h]' -exec ex -n '+norm!gg=G' +wq {} \;

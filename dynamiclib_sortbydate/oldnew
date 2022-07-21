@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -z $1 ] ; then 
+	echo "add a directory as argument" 
+	exit 1 ; 
+fi
+dio=$(find . -type f -exec stat -c "%n %y" {} \;)
+antico=$(echo "${dio}" | sort -k 2 | head -n 1)
+recente=$(echo "${dio}" | sort -k 2 | tail -n 1)
+echo "File più antico: $antico"
+echo "File più nuovo: $recente"
